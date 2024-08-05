@@ -159,13 +159,20 @@ done
 
 ## install test services
 ```bash
-for ctx in cluster2 clster1; do
+for ctx in cluster2 cluster1; do
   kubectl --context=${ctx} create namespace test
   echo "Adding test services on cluster: ${ctx} ........."
   kubectl --context=${ctx} apply \
-    -n test -k "github.com/chylli-deriv/website/multicluster/${ctx}/"
+    -n test -k "multicluster/${ctx}/"
   kubectl --context=${ctx} -n test \
     rollout status deploy/podinfo || break
   echo "-------------"
 done
 ```
+
+got this error:
+```
+error: invalid Kustomization: json: cannot unmarshal string into Go struct field Kustomization.patches of type types.Patch
+```
+
+I installed `brew install kustomize` and run `kustomize edit fix` under every dir `multicluster/base&cluster1&cluster2` but still not work.
