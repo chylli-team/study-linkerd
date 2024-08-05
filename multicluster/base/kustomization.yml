@@ -5,5 +5,5 @@ resources:
   - frontend.yml
   - ns.yml
 
-patchesStrategicMerge:
+patches:
   - patch.yml

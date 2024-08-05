@@ -1,6 +1,6 @@
 bases:
   - ../base
 
-patchesStrategicMerge:
+patches:
   - podinfo.yml
   - frontend.yml
