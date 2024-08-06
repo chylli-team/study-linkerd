@@ -200,3 +200,46 @@ Now we can visit redisinsight with the ip/port given by the last result.
 ```
 kubectl --context=cluster1 label svc redis mirror.linkerd.io/exported=true -n test
 ```
+check mirrored service:
+```
+kubectl --context=cluster2 get svc  -n test
+NAME                   TYPE           CLUSTER-IP     EXTERNAL-IP      PORT(S)        AGE
+redis-cluster1         ClusterIP      10.107.7.197   <none>           6379/TCP       75m
+redisinsight-service   LoadBalancer   10.98.80.117   192.168.50.215   80:31583/TCP   125m
+```
+
+## install antother redis instance into cluster2, to use its cli
+```
+kubectl --context=cluster2 apply -n test -f "resources/1-redis.yml"
+```
+
+When I connect mirrored redis with redis cli, the connection will be closed automatically
+
+let me create a simpler service
+
+# try hello-world
+
+```bash
+kubectl --context=cluster1 delete namespace test
+kubectl --context=cluster2 delete namespace test
+kubectl --context=cluster1 create namespace test
+kubectl --context=cluster2 create namespace test
+```
+
+## install hello-world
+```bash
+kubectl --context=cluster1 apply -n test -f "resources/1-hello.yml"
+```
+
+## export it to cluster2
+```
+kubectl --context=cluster1 label svc hello mirror.linkerd.io/exported=true -n test
+```
+
+## install busybox to cluster2 to test
+```bash
+kubectl --context=cluster2 apply -n test -f "resources/2-busybox.yml"
+```
+
+busybox still not work. 
+try a curl one
