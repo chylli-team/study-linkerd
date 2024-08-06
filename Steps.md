@@ -176,3 +176,27 @@ error: invalid Kustomization: json: cannot unmarshal string into Go struct field
 ```
 
 I installed `brew install kustomize` and run `kustomize edit fix` under every dir `multicluster/base&cluster1&cluster2` but still not work.
+
+# reinit
+I removed test namespace and prepare to install redis & redisinsight into cluster1 & cluster2
+
+## deploy redis
+```bash
+kubectl --context=cluster1 create namespace test
+kubectl --context=cluster1 apply -n test -f "resources/1-redis.yml"
+kubectl --context=cluster1 get svc redis -n test
+```
+
+## deploy redisinsight
+```bash
+kubectl --context=cluster2 create namespace test
+kubectl --context=cluster2 apply -n test -f "resources/2-redisinsight.yml"
+kubectl --context=cluster2 get svc redisinsight-service -n test
+```
+Here we use LoadBalancer to expose redisinsight to the internet since we want to visit it
+Now we can visit redisinsight with the ip/port given by the last result.
+
+## export redis
+```
+kubectl --context=cluster1 label svc redis mirror.linkerd.io/exported=true -n test
+```
